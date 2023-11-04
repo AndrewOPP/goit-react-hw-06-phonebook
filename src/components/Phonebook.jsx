@@ -1,18 +1,26 @@
 import { nanoid } from 'nanoid';
 import css from './Phonebook.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContact } from 'redux/contactsSlice';
 
-export const Phonebook = ({ onClickAddContact, isNameAlreadyinContacts }) => {
+export const Phonebook = () => {
+  const contacts = useSelector(state => state.contacts);
+  const dispatch = useDispatch();
+
+  const addToContacts = contact => {
+    if (contacts.find(elem => elem.name === contact.name))
+      return alert('Sorry, this contact is already added');
+    dispatch(addContact(contact));
+  };
+
   const handleSubmit = event => {
     event.preventDefault();
     const name = event.currentTarget.elements.name.value;
     const number = event.currentTarget.elements.phone.value;
     document.getElementById('mainForm').reset();
-    if (isNameAlreadyinContacts(name)) {
-      return alert(`${name} is already in contacts`);
-    }
+
     if (name && number) {
-      
-      onClickAddContact({
+      addToContacts({
         name: name,
         number: number,
         id: nanoid(),
